@@ -40,26 +40,32 @@ fun View2(navController: NavController, themeViewModel: ThemeViewModel) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Switch para cambiar entre modo
-            Row(
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = if (isDarkTheme) "🌙" else "☀️",
-                        style = MaterialTheme.typography.headlineLarge
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = if (isDarkTheme) "🌙" else "☀️",
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                        Text(text = if (isDarkTheme) "Modo Oscuro" else "Modo Claro")
+                    }
+                    Switch(
+                        checked = isDarkTheme,
+                        onCheckedChange = { themeViewModel.toggle() }
                     )
-                    Text(text = if (isDarkTheme) "Modo Oscuro" else "Modo Claro")
                 }
-                Switch(
-                    checked = isDarkTheme,
-                    onCheckedChange = { themeViewModel.toggle() }
-                )
             }
         }
     }
