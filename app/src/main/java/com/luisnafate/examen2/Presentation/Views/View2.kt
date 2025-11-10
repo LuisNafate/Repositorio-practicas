@@ -46,7 +46,16 @@ fun View2(navController: NavController, themeViewModel: ThemeViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = if (isDarkTheme) "Modo Oscuro" else "Modo Claro")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = if (isDarkTheme) "🌙" else "☀️",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                    Text(text = if (isDarkTheme) "Modo Oscuro" else "Modo Claro")
+                }
                 Switch(
                     checked = isDarkTheme,
                     onCheckedChange = { themeViewModel.toggle() }
