@@ -2,8 +2,10 @@ package com.luisnafate.practica14_11_2025.ui.dashboard
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.luisnafate.practica14_11_2025.data.Student
@@ -15,46 +17,82 @@ import com.luisnafate.practica14_11_2025.ui.AppScreen
 fun DashboardScreen(viewModel: StudentViewModel, navController: NavHostController) {
     val students by viewModel.allStudents.collectAsState(initial = emptyList())
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Lista de Estudiantes", style = MaterialTheme.typography.titleLarge)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Título y contador
+        Text(
+            "Lista de Estudiantes (${students.size})",
+            style = MaterialTheme.typography.titleLarge
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(students.size) { index ->
-                val student = students[index]
-                StudentItem(
-                    student = student,
-                    onDelete = { viewModel.deleteStudent(student) },
-                    onEdit = { navController.navigate(AppScreen.EditStudent.createRoute(student.id)) }
+        // Lista de estudiantes
+        if (students.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "No hay estudiantes.\n¡Agrega uno en el tab 'Agregar'!",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate(AppScreen.AddStudent.route) }) {
-            Text("Agregar Estudiante")
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(students) { student ->
+                    StudentItem(
+                        student = student,
+                        onDelete = { viewModel.deleteStudent(student) },
+                        onEdit = { navController.navigate(AppScreen.EditStudent.createRoute(student.id)) }
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 fun StudentItem(student: Student, onDelete: () -> Unit, onEdit: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column {
-            Text("${student.nombre} ${student.apellidos}", style = MaterialTheme.typography.bodyLarge)
-            Text("Grado: ${student.grado}, Grupo: ${student.grupo}", style = MaterialTheme.typography.bodyMedium)
-            Text("Puntaje: ${student.puntaje}", style = MaterialTheme.typography.bodySmall)
-        }
-        Row {
-            Button(onClick = onEdit) {
-                Text("Editar")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "${student.nombre} ${student.apellidos}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    "Grado: ${student.grado} | Grupo: ${student.grupo}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    "Puntaje: ${student.puntaje}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = onDelete) {
-                Text("Eliminar")
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                IconButton(onClick = onEdit) {
+                    Text("✏️")
+                }
+                IconButton(onClick = onDelete) {
+                    Text("🗑️")
+                }
             }
         }
     }
